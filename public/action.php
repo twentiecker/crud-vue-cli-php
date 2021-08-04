@@ -2,7 +2,12 @@
 
 //action.php
 
+// local connection database
 $connect = new PDO("mysql:host=localhost;dbname=testing", "root", "");
+
+// certain server connection database (example)
+// $connect = new PDO("mysql:host=sql208.epizy.com;dbname=epiz_29176098_ambulan", "epiz_29176098", "2XKPfcvIvHd");
+
 $received_data = json_decode(file_get_contents("php://input"));
 $data = array();
 if($received_data->action == 'fetchall')

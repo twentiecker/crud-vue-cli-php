@@ -2,7 +2,7 @@
   <div class="container">
     <br />
     <h3 align="center">
-      Delete or Remove Data From Mysql using Vue.js with PHP
+      <strong>Delete or Remove Data From Mysql using Vue.js with PHP</strong>
     </h3>
     <br />
     <div class="panel panel-default">
@@ -12,18 +12,22 @@
             <h3 class="panel-title">Sample Data</h3>
           </div>
           <div class="col-md-6" align="right">
-            <input
+            <!-- <input
               type="button"
               class="btn btn-success btn-xs"
               @click="openModel"
               value="Add"
-            />
+            /> -->
+            <b-button variant="success" @click="openModel"
+              ><b-icon-person-plus></b-icon-person-plus> Add</b-button
+            >
           </div>
         </div>
       </div>
-      <div class="panel-body">
+
+      <!-- <div class="panel-body">
         <div class="table-responsive">
-          <table class="table table-bordered table-striped">
+          <table class="table table-hover">
             <tr>
               <th>First Name</th>
               <th>Last Name</th>
@@ -54,6 +58,89 @@
                 </button>
               </td>
             </tr>
+          </table>
+        </div>
+      </div> -->
+
+      <div class="panel-body mt-3">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Gender</th>
+                <th>Hobby</th>
+                <th>Edit</th>
+                <th>Delete</th>
+              </tr>
+            </thead>
+            <tbody class="align-middle">
+              <tr v-for="row in allData" :key="row">
+                <td>{{ row.first_name }}</td>
+                <td>{{ row.last_name }}</td>
+                <td>{{ row.gender }}</td>
+                <td>{{ row.hobby }}</td>
+                <td>
+                  <!-- <button
+                  type="button"
+                  name="edit"
+                  class="btn btn-primary btn-xs edit"
+                  @click="fetchData(row.id)"
+                >
+                  <b-icon-person-plus></b-icon-person-plus>
+                </button> -->
+                  <b-button variant="outline-primary" @click="fetchData(row.id)"
+                    ><b-icon-pencil-fill></b-icon-pencil-fill
+                  ></b-button>
+                </td>
+                <td>
+                  <!-- <button
+                  type="button"
+                  name="delete"
+                  class="btn btn-danger btn-xs delete"
+                  @click="deleteData(row.id)"
+                >
+                  Delete
+                </button> -->
+                  <b-button variant="outline-danger" @click="deleteData(row.id)"
+                    ><b-icon-trash-fill></b-icon-trash-fill
+                  ></b-button>
+                </td>
+              </tr>
+              <tr>
+                <td>Nur Hafizah</td>
+                <td>Agustina</td>
+                <td>Female</td>
+                <td>Coding</td>
+                <td>
+                  <!-- <button
+                  type="button"
+                  name="edit"
+                  class="btn btn-primary btn-xs edit"
+                  @click="fetchData(row.id)"
+                >
+                  <b-icon-person-plus></b-icon-person-plus>
+                </button> -->
+                  <b-button variant="outline-primary" @click="fetchData(row.id)"
+                    ><b-icon-pencil-fill></b-icon-pencil-fill
+                  ></b-button>
+                </td>
+                <td>
+                  <!-- <button
+                  type="button"
+                  name="delete"
+                  class="btn btn-danger btn-xs delete"
+                  @click="deleteData(row.id)"
+                >
+                  Delete
+                </button> -->
+                  <b-button variant="outline-danger" @click="deleteData(row.id)"
+                    ><b-icon-trash-fill></b-icon-trash-fill
+                  ></b-button>
+                </td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>
@@ -87,6 +174,21 @@
                       v-model="last_name"
                     />
                   </div>
+                  <div class="form-group">
+                    <label>Enter Gender</label>
+                    <input type="text" class="form-control" v-model="gender" />
+                  </div>
+                  <div class="form-group">
+                    <label>Enter Hobby</label>
+                    <div>
+                      <b-form-select
+                        class="form-control"
+                        v-model="hobby"
+                        :options="options"
+                      ></b-form-select>
+                    </div>
+                  </div>
+
                   <br />
                   <div align="center">
                     <input type="hidden" v-model="hiddenId" />
@@ -115,6 +217,12 @@ export default {
     return {
       allData: "",
       myModel: false,
+      options: [
+        { value: null, text: "Please select an option" },
+        { value: "Gaming", text: "Gaming" },
+        { value: "Coding", text: "Coding" },
+        { value: "Designing", text: "Designing" },
+      ],
       actionButton: "Insert",
       dynamicTitle: "Add Data",
     };
@@ -136,6 +244,8 @@ export default {
 
       self.first_name = "";
       self.last_name = "";
+      self.gender = "";
+      self.hobby = null;
       self.actionButton = "Insert";
       self.dynamicTitle = "Add Data";
       self.myModel = true;
@@ -143,19 +253,28 @@ export default {
     submitData: function() {
       let self = this;
 
-      if (self.first_name != "" && self.last_name != "") {
+      if (
+        self.first_name != "" &&
+        self.last_name != "" &&
+        self.gender != "" &&
+        self.hobby != null
+      ) {
         if (self.actionButton == "Insert") {
           axios
             .post("action.php", {
               action: "insert",
               firstName: self.first_name,
               lastName: self.last_name,
+              gender: self.gender,
+              hobby: self.hobby,
             })
             .then(function(response) {
               self.myModel = false;
               self.fetchAllData();
               self.first_name = "";
               self.last_name = "";
+              self.gender = "";
+              self.hobby = null;
               alert(response.data.message);
             });
         }
@@ -165,6 +284,8 @@ export default {
               action: "update",
               firstName: self.first_name,
               lastName: self.last_name,
+              gender: self.gender,
+              hobby: self.hobby,
               hiddenId: self.hiddenId,
             })
             .then(function(response) {
@@ -172,6 +293,8 @@ export default {
               self.fetchAllData();
               self.first_name = "";
               self.last_name = "";
+              self.gender = "";
+              self.hobby = null;
               self.hiddenId = "";
               alert(response.data.message);
             });
@@ -191,6 +314,8 @@ export default {
         .then(function(response) {
           self.first_name = response.data.first_name;
           self.last_name = response.data.last_name;
+          self.gender = response.data.gender;
+          self.hobby = response.data.hobby;
           self.hiddenId = response.data.id;
           self.myModel = true;
           self.actionButton = "Update";

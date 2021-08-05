@@ -28,13 +28,15 @@ if($received_data->action == 'insert')
 {
  $data = array(
   ':first_name' => $received_data->firstName,
-  ':last_name' => $received_data->lastName
+  ':last_name' => $received_data->lastName,
+  ':gender' => $received_data->gender,
+  ':hobby' => $received_data->hobby
  );
 
  $query = "
  INSERT INTO tbl_sample 
- (first_name, last_name) 
- VALUES (:first_name, :last_name)
+ (first_name, last_name, gender, hobby) 
+ VALUES (:first_name, :last_name, :gender, :hobby)
  ";
 
  $statement = $connect->prepare($query);
@@ -65,6 +67,8 @@ if($received_data->action == 'fetchSingle')
   $data['id'] = $row['id'];
   $data['first_name'] = $row['first_name'];
   $data['last_name'] = $row['last_name'];
+  $data['gender'] = $row['gender'];
+  $data['hobby'] = $row['hobby'];
  }
 
  echo json_encode($data);
@@ -74,13 +78,17 @@ if($received_data->action == 'update')
  $data = array(
   ':first_name' => $received_data->firstName,
   ':last_name' => $received_data->lastName,
+  ':gender' => $received_data->gender,
+  ':hobby' => $received_data->hobby,
   ':id'   => $received_data->hiddenId
  );
 
  $query = "
  UPDATE tbl_sample 
  SET first_name = :first_name, 
- last_name = :last_name 
+ last_name = :last_name,
+ gender = :gender,  
+ hobby = :hobby  
  WHERE id = :id
  ";
 

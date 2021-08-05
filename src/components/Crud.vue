@@ -6,12 +6,24 @@
     </h3>
     <br />
     <div class="panel panel-default">
+      <!-- sort and add data -->
       <div class="panel-heading">
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-4" align="left">
             <h3 class="panel-title">Sample Data</h3>
           </div>
-          <div class="col-md-6" align="right">
+          <div class="col-md-3" align="right">
+            <h3>Sort by:</h3>
+          </div>
+          <div class="col-md-3" align="left">
+            <b-form-select
+              class="form-control"
+              v-model="sortby"
+              :options="options"
+              @change="sortData"
+            ></b-form-select>
+          </div>
+          <div class="col-md-2" align="right">
             <!-- <input
               type="button"
               class="btn btn-success btn-xs"
@@ -24,44 +36,8 @@
           </div>
         </div>
       </div>
-
-      <!-- <div class="panel-body">
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Edit</th>
-              <th>Delete</th>
-            </tr>
-            <tr v-for="row in allData" :key="row">
-              <td>{{ row.first_name }}</td>
-              <td>{{ row.last_name }}</td>
-              <td>
-                <button
-                  type="button"
-                  name="edit"
-                  class="btn btn-primary btn-xs edit"
-                  @click="fetchData(row.id)"
-                >
-                  Edit
-                </button>
-              </td>
-              <td>
-                <button
-                  type="button"
-                  name="delete"
-                  class="btn btn-danger btn-xs delete"
-                  @click="deleteData(row.id)"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </div> -->
-
+      <!-- end of sort and add data -->
+      <!-- table of contents -->
       <div class="panel-body mt-3">
         <div class="table-responsive">
           <table class="table table-hover">
@@ -108,11 +84,11 @@
                   ></b-button>
                 </td>
               </tr>
-              <tr>
-                <td>Nur Hafizah</td>
-                <td>Agustina</td>
-                <td>Female</td>
-                <td>Coding</td>
+              <tr v-for="row in dummyData" :key="row">
+                <td>{{ row.first_name }}</td>
+                <td>{{ row.last_name }}</td>
+                <td>{{ row.gender }}</td>
+                <td>{{ row.hobby }}</td>
                 <td>
                   <!-- <button
                   type="button"
@@ -144,7 +120,9 @@
           </table>
         </div>
       </div>
+      <!-- end of table of contents -->
     </div>
+    <!-- myModel for entri data -->
     <div v-if="myModel">
       <transition name="model">
         <div class="modal-mask">
@@ -206,6 +184,7 @@
         </div>
       </transition>
     </div>
+    <!-- end of myModel for entri data -->
   </div>
 </template>
 
@@ -215,7 +194,34 @@ const axios = require("axios");
 export default {
   data() {
     return {
+      dummyData: [
+        {
+          first_name: "Lukman",
+          last_name: "Arifandhi",
+          gender: "male",
+          hobby: "Coding",
+        },
+        {
+          first_name: "Nur",
+          last_name: "Agustina",
+          gender: "female",
+          hobby: "Designing",
+        },
+        {
+          first_name: "Rafanza",
+          last_name: "Arziki",
+          gender: "male",
+          hobby: "Gaming",
+        },
+        {
+          first_name: "Celmira",
+          last_name: "Almaviva",
+          gender: "female",
+          hobby: "Designing",
+        },
+      ],
       allData: "",
+      sortby: null,
       myModel: false,
       options: [
         { value: null, text: "Please select an option" },
@@ -228,6 +234,18 @@ export default {
     };
   },
   methods: {
+    sortData: function() {
+      let self = this;
+
+      axios
+        .post("action.php", {
+          action: "sortdata",
+          sortby: self.sortby,
+        })
+        .then(function(response) {
+          self.allData = response.data;
+        });
+    },
     fetchAllData: function() {
       let self = this;
 

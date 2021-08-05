@@ -10,6 +10,40 @@ $connect = new PDO("mysql:host=localhost;dbname=testing", "root", "");
 
 $received_data = json_decode(file_get_contents("php://input"));
 $data = array();
+// sortby without any option selected
+if($received_data->action == 'sortdata' && $received_data->sortby == null)
+{    
+ $query = "
+ SELECT * FROM tbl_sample 
+ ORDER BY id DESC
+ ";
+ $statement = $connect->prepare($query);
+ $statement->execute();
+ while($row = $statement->fetch(PDO::FETCH_ASSOC))
+ {
+  $data[] = $row;
+ }
+ echo json_encode($data);
+}
+
+// sortby an options
+if($received_data->action == 'sortdata' && $received_data->sortby != null)
+{    
+ $query = "
+ SELECT * FROM tbl_sample 
+ WHERE hobby = '".$received_data->sortby."'
+ ORDER BY id DESC
+ ";
+ $statement = $connect->prepare($query);
+ $statement->execute();
+ while($row = $statement->fetch(PDO::FETCH_ASSOC))
+ {
+  $data[] = $row;
+ }
+ echo json_encode($data);
+}
+
+// fetchall action
 if($received_data->action == 'fetchall')
 {
  $query = "
@@ -24,6 +58,8 @@ if($received_data->action == 'fetchall')
  }
  echo json_encode($data);
 }
+
+// insert action
 if($received_data->action == 'insert')
 {
  $data = array(
@@ -49,6 +85,8 @@ if($received_data->action == 'insert')
 
  echo json_encode($output);
 }
+
+// fetchSingle action
 if($received_data->action == 'fetchSingle')
 {
  $query = "
@@ -73,6 +111,8 @@ if($received_data->action == 'fetchSingle')
 
  echo json_encode($data);
 }
+
+// update action
 if($received_data->action == 'update')
 {
  $data = array(
@@ -103,6 +143,7 @@ if($received_data->action == 'update')
  echo json_encode($output);
 }
 
+// delete action
 if($received_data->action == 'delete')
 {
  $query = "

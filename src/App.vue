@@ -4,18 +4,23 @@
     <img alt="PHP logo" src="./assets/php.png" />
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
     <Crud />
+    <br />
+    <br />
+    <Upload />
   </div>
 </template>
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
 import Crud from "./components/Crud.vue";
+import Upload from "./components/Upload.vue";
 
 export default {
   name: "App",
   components: {
     // HelloWorld
     Crud,
+    Upload,
   },
 };
 </script>
